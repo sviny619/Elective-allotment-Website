@@ -16,5 +16,6 @@ Usage:
 
 This project serves as a foundation for building file upload functionality and handling CSV data. It can be extended to support additional features, such as data validation, database integration, or further processing of the uploaded file.
 
-Please note that proper security measures and file validation should be implemented before deploying this project in a production environment.
+feel free to contribute
+
 
