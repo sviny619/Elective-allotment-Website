@@ -4,6 +4,11 @@ const fs = require('fs');
 const Papa = require('papaparse');
 const csv = require('csv-parser');
 const multer = require('multer');
+const e1=0
+const e2=0
+const e3=0
+const e4=0
+const alloted={}
 const upload = multer({
     dest: 'uploads/',
     fileFilter: (req, file, cb) => {
