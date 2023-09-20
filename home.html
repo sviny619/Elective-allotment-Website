@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elective Entry</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: url(background.jpg);
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        h1 {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+font-family:'Times New Roman', Times, serif;
+            color: #6b8aab;
+            margin-bottom: 20px;
+        }
+
+        form {
+            max-width: 100%;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-top: 10px;
+            text-align: left;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 48%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            display: inline-block;
+            box-sizing: border-box;
+        }
+
+        .entry-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .entry-options .delete-icon {
+            color: #dc3545;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .entry-options .delete-icon:hover {
+            color: #300db0;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .btn-container button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn-container #add-button {
+            background-color: #007BFF;
+            color: #fff;
+            margin-right: 10px;
+            transition: background-color 0.2s;
+        }
+
+        .btn-container #add-button:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-container #submit-button {
+            background-color: #28a745;
+            color: #fff;
+            transition: background-color 0.2s;
+        }
+
+        .btn-container #submit-button:hover {
+            background-color: #1e7e34;
+        }
+    </style>
+    <!-- Include Font Awesome CSS for the delete icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Elective Entry Form</h1>
+        <form action="/submit" method="post" id="electiveForm">
+            <div id="electiveEntries">
+                <!-- Elective Entry Fields will be added here dynamically -->
+            </div>
+            <div class="btn-container">
+                <button type="button" id="add-button" onclick="addElectiveEntry()">Add One</button>
+                <button type="submit" id="submit-button">Submit</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        let entryCount = 1;
+
+        function addElectiveEntry() {
+            const electiveEntries = document.getElementById('electiveEntries');
+            const newEntry = document.createElement('div');
+            newEntry.innerHTML = `
+                <div class="entry-options">
+                    <label for="elective${entryCount}">Elective ${entryCount}:</label>
+                    <i class="fas fa-trash delete-icon" onclick="deleteElectiveEntry(this)"></i>
+                </div>
+                <input type="text" id="elective${entryCount}" name="elective${entryCount}" placeholder="Enter elective name" required>
+                <input type="number" id="maxStudents${entryCount}" name="maxStudents${entryCount}" placeholder="Max Students" required>
+            `;
+            electiveEntries.appendChild(newEntry);
+            entryCount++;
+        }
+
+        function deleteElectiveEntry(icon) {
+            const entryDiv = icon.parentElement.parentElement;
+            entryDiv.remove();
+            
+            // Update the entry numbering after deletion
+            const entries = document.querySelectorAll('#electiveEntries > div');
+            entryCount = 1;
+            entries.forEach((entry) => {
+                const label = entry.querySelector('label');
+                label.textContent = `Elective ${entryCount}:`;
+                entryCount++;
+            });
+        }
+    </script>
+</body>
+</html>

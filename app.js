@@ -1,15 +1,17 @@
-
+const bodyParser = require('body-parser');
 const express = require('express');
 const fs = require('fs');
 const Papa = require('papaparse');
 const csv = require('csv-parser');
 const multer = require('multer');
-const e1 = 0
-const e2 = 0
-const e3 = 0
-const e4 = 0
 const alloted = {}
 const roll_alloted = {};
+const max_students_elec = {}
+const preferencesByRollNo = {};
+const app = express();
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 const upload = multer({
     dest: 'uploads/',
@@ -25,15 +27,47 @@ const upload = multer({
 const results = [];
 let ans = {}
 
-const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'))
 app.get("/", function (req, res) {
     res.sendFile(__dirname + "/index.html")
 })
+app.get("/home", function (req, res) {
+    res.sendFile(__dirname + "/home.html")
+})
+
+app.post('/submit', function (req, res) {
+    const electiveEntries = [];
+
+    // Loop through the posted form data
+    for (let i = 1; i <= Object.keys(req.body).length / 2; i++) {
+        const electiveName = req.body[`elective${i}`];
+        const maxStudents = req.body[`maxStudents${i}`];
+
+        // Create an object for each elective entry
+        const electiveEntry = {
+            electiveName,
+            maxStudents: parseInt(maxStudents), // Convert to a number
+        };
+
+        electiveEntries.push(electiveEntry);
+        const formattedKey = electiveName.toLowerCase().replace(/\s/g, ''); // Remove spaces and make lowercase
+        max_students_elec[formattedKey] = parseInt(maxStudents);
+
+    }
+
+    // Now you can work with electiveEntries as an array of objects on the server side
+    // For demonstration, let's console.log the received data
+    console.log(max_students_elec);
+
+    // You can also return a response to the client if needed.
+
+    // For demonstration, let's send a success response
+    res.redirect('/')
 
 
+})
 app.post('/upload', upload.single('csvFile'), (req, res) => {
     const filePath = req.file.path;
     if (filePath === null) {
@@ -48,28 +82,41 @@ app.post('/upload', upload.single('csvFile'), (req, res) => {
         .on('end', () => {
             // Process the parsed CSV data (results) as JavaScript objects
             // console.log(results);
+            const preferencesByRollNo = {};
 
-            results.forEach(function (ele) {
-                const roll = ele['Roll no']
+            // Iterate through the data and extract preferences starting from the 5th index
+            results.forEach(entry => {
+                const rollNo = entry['Roll no'].trim(); // Remove extra spaces
+                const preferences = [];
 
-                ans[roll] = [ele['Elective 2 [Preference 1]'], ele['Elective 2 [Preference 2]'], ele['Elective 2 [Preference 3]'], ele['Elective 2 [Preference 4]']]
-            })
-            const dic = {};
+                // Iterate through the object properties starting from the 5th index
+                for (let i = 4; i <= Object.keys(entry).length; i++) {
+                    const preferenceKey = Object.keys(entry)[i];
+                    const preferenceValue = entry[preferenceKey];
+                    
+                    if (preferenceValue) {
+                        const formattedPreference = preferenceValue.toLowerCase().replace(/\s/g, '');
+                        preferences.push(formattedPreference);
+                    }
+                }
+
+                preferencesByRollNo[rollNo] = preferences;
+            });
+            console.log(preferencesByRollNo);
+
+
+
+
 
             // Iterate through the data and its arrays
-            for (const key in ans) {
-                const items = ans[key];
-                for (const item of items) {
-                    dic[item] = 0;
-                }
-            }
+            
 
             // Assuming 'data' is defined somewhere in your code
-            for (const i in ans) {
-                for (const j of ans[i]) {
-                    if (dic[j] < 50) {
+            for (const i in preferencesByRollNo) {
+                for (const j of preferencesByRollNo[i]) {
+                    if (max_students_elec[j] >0) {
                         roll_alloted[i] = j;
-                        dic[j]++;
+                        max_students_elec[j]--;
                         break;
                     }
                 }
@@ -85,6 +132,7 @@ app.post('/upload', upload.single('csvFile'), (req, res) => {
 
 
             // Send a response back to the client
+            // res.send(<p>success</p>);
             res.redirect('/download-csv');
         });
 });
