@@ -10,9 +10,12 @@ Features:
 - Demonstrates basic file handling on the server-side, including logging the file path and original name
 
 Usage:
-1. Open the web page and select a CSV file.
-2. Click the "Upload" button to submit the file.
-3. The file is parsed and processed, with the file path and original name logged on the server.
+1. Open the website enter your subject names and enter maximum limit for each subjects
+2. press the submit button it will take u to a interface where u need to upload your csv file
+3. Upload the csv file
+4. Click the "Upload" button to submit the file.
+5. The file is parsed and processed, with the file path and original name logged on the server.
+
 
 This project serves as a foundation for building file upload functionality and handling CSV data. It can be extended to support additional features, such as data validation, database integration, or further processing of the uploaded file.
 
